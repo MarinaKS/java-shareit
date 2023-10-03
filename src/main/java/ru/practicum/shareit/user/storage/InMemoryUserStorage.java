@@ -6,10 +6,7 @@ import ru.practicum.shareit.Exceptions.ObjctAlreadyExistException;
 import ru.practicum.shareit.Exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -54,7 +51,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     boolean validateEmailExist(User user) {
         for (User userInMap : usersMap.values()) {
-            if (user.getEmail().equals(userInMap.getEmail()) && userInMap.getId() != user.getId()) {
+            if (user.getEmail().equals(userInMap.getEmail()) && !Objects.equals(userInMap.getId(), user.getId())) {
                 throw new ObjctAlreadyExistException("Пользователь с таким email уже добавлен");
             }
         }
