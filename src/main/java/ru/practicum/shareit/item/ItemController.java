@@ -22,11 +22,12 @@ import java.util.List;
 @Slf4j
 @RequestMapping("/items")
 public class ItemController {
+    public static final String X_SHARER_USER_ID = "X-Sharer-User-Id";
     private final ItemService itemService;
     private final UserService userService;
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId) {
         validateUserIdExist(userId);
         List<Item> items = itemService.getItems(userId);
         List<ItemDto> itemDtos = new ArrayList<>();
@@ -38,7 +39,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
         validateUserIdExist(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwnerId(userId);
@@ -48,7 +49,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody @Valid ItemUpdatedDto itemUpdatedDto, @PathVariable long itemId) {
+    public ItemDto updateItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemUpdatedDto itemUpdatedDto, @PathVariable long itemId) {
         validateUserIdExist(userId);
         Item itemValidate = itemService.getItem(userId, itemId);
         validateOwner(itemValidate, userId);
@@ -61,14 +62,14 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+    public ItemDto getItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
         validateUserIdExist(userId);
         Item item = itemService.getItemByItemId(itemId);
         return ItemMapper.toItemDto(item);
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestHeader("X-Sharer-User-Id") long userId, @RequestParam("text") String text) {
+    public List<ItemDto> searchItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam("text") String text) {
         validateUserIdExist(userId);
         List<Item> items = itemService.searchItem(userId, text);
         List<ItemDto> itemDtos = new ArrayList<>();

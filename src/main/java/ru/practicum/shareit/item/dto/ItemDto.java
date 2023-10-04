@@ -6,9 +6,6 @@ import lombok.NonNull;
 
 import javax.validation.constraints.NotEmpty;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Data
 @Builder
 public class ItemDto {
