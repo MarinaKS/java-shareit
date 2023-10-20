@@ -9,7 +9,6 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.BookingValidationException;
 import ru.practicum.shareit.exceptions.ItemUnavailableException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.UserNotOwnerException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -128,13 +127,6 @@ public class BookingServiceImpl implements BookingService {
     boolean validateItemExist(Long userId) {
         if (itemRepository.findAllByOwnerIdIs(userId).isEmpty()) {
             throw new ObjectNotFoundException("У этого пользователя нет ни одной вещи");
-        }
-        return true;
-    }
-
-    boolean validateItemOwner(Booking booking) {
-        if (!Objects.equals(booking.getItem().getOwnerId(), booking.getBooker())) {
-            throw new UserNotOwnerException("Пользователь не является хозяином вещи");
         }
         return true;
     }
