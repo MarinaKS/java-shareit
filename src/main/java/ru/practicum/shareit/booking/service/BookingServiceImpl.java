@@ -35,8 +35,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking approveStatus(long userId, long bookingId, boolean approved) {
-        Booking booking = bookingRepository.findById(bookingId).
-                orElseThrow(() -> new ObjectNotFoundException("Нет бронирования с таким id"));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ObjectNotFoundException("Нет бронирования с таким id"));
         if (booking.getStatus() == Status.APPROVED) {
             throw new BookingValidationException("Бронирование уже подтсверждено");
         }
@@ -48,8 +48,8 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking getBooking(long userId, long bookingId) {
         validateUser(userId);
-        Booking booking = bookingRepository.findById(bookingId).
-                orElseThrow(() -> new ObjectNotFoundException("Нет бронирования с таким id"));
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ObjectNotFoundException("Нет бронирования с таким id"));
         validateOwnerOrBooker(booking, userId);
         return booking;
     }
@@ -103,10 +103,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     boolean validateBooking(Booking booking) {
-        User user = userRepository.findById(booking.getBooker().getId()).
-                orElseThrow(() -> new ObjectNotFoundException("нет пользователя с таким id"));
-        Item item = itemRepository.findById(booking.getItem().getId()).
-                orElseThrow(() -> new ObjectNotFoundException("нет вещи с таким id"));
+        User user = userRepository.findById(booking.getBooker().getId())
+                .orElseThrow(() -> new ObjectNotFoundException("нет пользователя с таким id"));
+        Item item = itemRepository.findById(booking.getItem().getId())
+                .orElseThrow(() -> new ObjectNotFoundException("нет вещи с таким id"));
         if (Objects.equals(item.getOwnerId(), booking.getBooker().getId())) {
             throw new ObjectNotFoundException("Бронировать вещь у самого себя бессмысленно");
         }
@@ -140,10 +140,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private Booking fillBookingField(Booking booking) {
-        booking.setItem(itemRepository.findById(booking.getItem().getId()).
-                orElseThrow(() -> new IllegalArgumentException()));
-        booking.setBooker(userRepository.findById(booking.getBooker().getId()).
-                orElseThrow(() -> new IllegalArgumentException()));
+        booking.setItem(itemRepository.findById(booking.getItem().getId())
+                .orElseThrow(() -> new IllegalArgumentException()));
+        booking.setBooker(userRepository.findById(booking.getBooker().getId())
+                .orElseThrow(() -> new IllegalArgumentException()));
         return booking;
     }
 

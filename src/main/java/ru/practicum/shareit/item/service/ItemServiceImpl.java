@@ -76,8 +76,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item updateItem(Item updatedItem) {
         validateUserIdExist(updatedItem.getOwnerId());
-        Item item = itemRepository.findById(updatedItem.getId()).
-                orElseThrow(() -> new ObjectNotFoundException("Нет итема с таким id"));
+        Item item = itemRepository.findById(updatedItem.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Нет итема с таким id"));
         validateOwner(item, updatedItem.getOwnerId());
         if (updatedItem.getIsAvailable() == null) {
             updatedItem.setIsAvailable(item.getIsAvailable());
@@ -134,8 +134,8 @@ public class ItemServiceImpl implements ItemService {
         if (bookings.isEmpty()) {
             throw new CommentValidationException("Этот пользователь не брал эту вещь в аренду");
         }
-        User author = userRepository.findById(comment.getAuthor().getId()).
-                orElseThrow(() -> new ObjectNotFoundException("Такого пользователя не существует"));
+        User author = userRepository.findById(comment.getAuthor().getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Такого пользователя не существует"));
         comment.setAuthor(author);
         return commentRepository.save(comment);
     }
