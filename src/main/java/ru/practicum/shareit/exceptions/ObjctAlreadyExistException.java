@@ -1,4 +1,4 @@
-package ru.practicum.shareit.Exceptions;
+package ru.practicum.shareit.exceptions;
 
 public class ObjctAlreadyExistException extends RuntimeException {
     public ObjctAlreadyExistException() {

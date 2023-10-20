@@ -21,7 +21,7 @@ public class UserMapper {
         return user;
     }
 
-    public static UserUpdateDto userUpdateDto(User user) {
+    public static UserUpdateDto toUserUpdateDto(User user) {
         return new UserUpdateDto(
                 user.getId(),
                 user.getName(),
@@ -35,5 +35,12 @@ public class UserMapper {
         user.setName(userUpdateDto.getName());
         user.setEmail(userUpdateDto.getEmail());
         return user;
+    }
+
+    public static UserBookingDto toUserBookingDto(User user) {
+        return new UserBookingDto(
+                user.getId(),
+                user.getName()
+        );
     }
 }

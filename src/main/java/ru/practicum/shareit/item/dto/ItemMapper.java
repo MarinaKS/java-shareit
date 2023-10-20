@@ -1,8 +1,11 @@
 package ru.practicum.shareit.item.dto;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingForItemResponseDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.model.ItemRequest;
+
+import java.util.List;
 
 @Service
 public class ItemMapper {
@@ -44,5 +47,29 @@ public class ItemMapper {
             item.setRequest(itemRequest);
         }
         return item;
+    }
+
+    public static ItemBookingDto toItemBookingDto(Item item) {
+        return new ItemBookingDto(
+                item.getId(),
+                item.getName()
+        );
+    }
+
+    public static ItemResponseWithBookingDto toItemResponseWithBookingDto(Item item,
+                                                                          BookingForItemResponseDto lastBooking,
+                                                                          BookingForItemResponseDto nextBooking,
+                                                                          List<CommentDto> commentDtos
+    ) {
+        return new ItemResponseWithBookingDto(
+                item.getId(),
+                item.getName(),
+                item.getDescription(),
+                item.getIsAvailable(),
+                item.getRequest() != null ? item.getRequest().getId() : null,
+                lastBooking,
+                nextBooking,
+                commentDtos
+        );
     }
 }

@@ -3,17 +3,16 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.Exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.Exceptions.UpdateItemException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemUpdatedDto;
+import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +26,9 @@ public class ItemController {
     private final UserService userService;
 
     @GetMapping
-    public List<ItemDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId) {
+    public List<ItemResponseWithBookingDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId) {
         validateUserIdExist(userId);
-        List<Item> items = itemService.getItems(userId);
-        List<ItemDto> itemDtos = new ArrayList<>();
-        for (Item item : items) {
-            itemDtos.add(ItemMapper.toItemDto(item));
-        }
+        List<ItemResponseWithBookingDto> itemDtos = itemService.getItems(userId);
         log.info("Получен список всех вещей польхователя %s", userId);
         return itemDtos;
     }
@@ -50,9 +45,6 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemUpdatedDto itemUpdatedDto, @PathVariable long itemId) {
-        validateUserIdExist(userId);
-        Item itemValidate = itemService.getItem(userId, itemId);
-        validateOwner(itemValidate, userId);
         itemUpdatedDto.setId(itemId);
         Item item = ItemMapper.toItem(itemUpdatedDto);
         item.setOwnerId(userId);
@@ -62,16 +54,15 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
+    public ItemResponseWithBookingDto getItem(@RequestHeader(X_SHARER_USER_ID) long userId, @PathVariable long itemId) {
         validateUserIdExist(userId);
-        Item item = itemService.getItemByItemId(itemId);
-        return ItemMapper.toItemDto(item);
+        return itemService.getItem(itemId, userId);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam("text") String text) {
         validateUserIdExist(userId);
-        List<Item> items = itemService.searchItem(userId, text);
+        List<Item> items = itemService.searchItem(text);
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
             itemDtos.add(ItemMapper.toItemDto(item));
@@ -79,11 +70,12 @@ public class ItemController {
         return itemDtos;
     }
 
-    boolean validateOwner(Item item, long userId) {
-        if (item.getOwnerId() != userId) {
-            throw new UpdateItemException("Редактировать вещь может только ее пользователь");
-        }
-        return true;
+    @PostMapping("/{itemId}/comment")
+    public CommentDto addComment(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid CommentDto commentDto,
+                                 @PathVariable @Valid long itemId) {
+        Comment comment = CommentMapper.toComment(commentDto, userId, itemId, LocalDateTime.now());
+        Comment commentAdded = itemService.addComment(comment);
+        return CommentMapper.toCommentDto(commentAdded);
     }
 
     boolean validateUserIdExist(long userId) {
