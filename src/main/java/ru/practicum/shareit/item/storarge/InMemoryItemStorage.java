@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.storarge;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.Exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;

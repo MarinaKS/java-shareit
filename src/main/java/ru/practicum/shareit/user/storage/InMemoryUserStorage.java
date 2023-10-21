@@ -2,8 +2,8 @@ package ru.practicum.shareit.user.storage;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.Exceptions.ObjctAlreadyExistException;
-import ru.practicum.shareit.Exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.ObjctAlreadyExistException;
+import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
