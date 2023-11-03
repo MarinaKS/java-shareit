@@ -2,34 +2,44 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.validation.Valid;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static ru.practicum.shareit.Consts.X_SHARER_USER_ID;
+
+@Validated
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/items")
 public class ItemController {
-    public static final String X_SHARER_USER_ID = "X-Sharer-User-Id";
     private final ItemService itemService;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @GetMapping
-    public List<ItemResponseWithBookingDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId) {
+    public List<ItemResponseWithBookingDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId,
+                                                     @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
+                                                     @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+        if (from == null && size == null) {
+            from = 0;
+            size = Integer.MAX_VALUE;
+            ;
+        }
         validateUserIdExist(userId);
-        List<ItemResponseWithBookingDto> itemDtos = itemService.getItems(userId);
-        log.info("Получен список всех вещей польхователя %s", userId);
+        List<ItemResponseWithBookingDto> itemDtos = itemService.getItems(userId, from, size);
+        log.info("Получен список всех вещей пользователя %s", userId);
         return itemDtos;
     }
 
@@ -60,9 +70,16 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDto> searchItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam("text") String text) {
+    public List<ItemDto> searchItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam("text") String text,
+                                    @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
+                                    @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+        if (from == null && size == null) {
+            from = 0;
+            size = Integer.MAX_VALUE;
+            ;
+        }
         validateUserIdExist(userId);
-        List<Item> items = itemService.searchItem(text);
+        List<Item> items = itemService.searchItem(text, from, size);
         List<ItemDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
             itemDtos.add(ItemMapper.toItemDto(item));
@@ -79,11 +96,8 @@ public class ItemController {
     }
 
     boolean validateUserIdExist(long userId) {
-        for (User user : userService.getUsers()) {
-            if (user.getId() == userId) {
-                return true;
-            }
-        }
-        throw new ObjectNotFoundException("Такого пользователя не добавлено");
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Такого пользователя не добавлено"));
+        return true;
     }
 }
