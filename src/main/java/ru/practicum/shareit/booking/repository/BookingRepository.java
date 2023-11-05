@@ -12,49 +12,50 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking findByItemId(long itemId);
 
-    List<Booking> findAllByBookerIdIsOrderByStartDesc(long bookerId);
+    List<Booking> findAllByBookerIdIsOrderByStartDesc(long bookerId, Pageable pageable);
 
-    List<Booking> findAllByBookerIdIsAndAndStatusIsOrderByStartDesc(long bookerId, Status status);
+    List<Booking> findAllByBookerIdIsAndAndStatusIsOrderByStartDesc(long bookerId, Status status, Pageable pageable);
 
-    List<Booking> findAllByBookerIdIsAndStartIsBeforeAndEndIsAfterOrderByStartDesc(long bookerId, LocalDateTime now, LocalDateTime now2);
+    List<Booking> findAllByBookerIdIsAndStartIsBeforeAndEndIsAfterOrderByStartDesc(
+            long bookerId, LocalDateTime now, LocalDateTime now2, Pageable pageable);
 
-    List<Booking> findAllByBookerIdIsAndEndIsBeforeOrderByStartDesc(long bookerId, LocalDateTime now);
+    List<Booking> findAllByBookerIdIsAndEndIsBeforeOrderByStartDesc(long bookerId, LocalDateTime now, Pageable pageable);
 
-    List<Booking> findAllByBookerIdIsAndStartIsAfterOrderByStartDesc(long bookerId, LocalDateTime now);
+    List<Booking> findAllByBookerIdIsAndStartIsAfterOrderByStartDesc(long bookerId, LocalDateTime now, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
             "where b.item.id in (select i.id from Item as i where i.ownerId = ?1) " +
             "order by b.start desc")
-    List<Booking> findAllByOwner(long ownerId);
+    List<Booking> findAllByOwner(long ownerId, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
             "where b.item.id in (select i.id from Item as i where i.ownerId = ?1) " +
             "and b.start < ?2 and b.end > ?3 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerCurrent(long ownerId, LocalDateTime now, LocalDateTime now2);
+    List<Booking> findAllByOwnerCurrent(long ownerId, LocalDateTime now, LocalDateTime now2, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
             "where b.item.id in (select i.id from Item as i where i.ownerId = ?1) " +
             "and b.end < ?2 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerPast(long ownerId, LocalDateTime now);
+    List<Booking> findAllByOwnerPast(long ownerId, LocalDateTime now, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
             "where b.item.id in (select i.id from Item as i where i.ownerId = ?1) " +
             "and b.start > ?2 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerFuture(long ownerId, LocalDateTime now);
+    List<Booking> findAllByOwnerFuture(long ownerId, LocalDateTime now, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +
             "where b.item.id in (select i.id from Item as i where i.ownerId = ?1) " +
             "and b.status = ?2 " +
             "order by b.start desc")
-    List<Booking> findAllByOwnerStatusIs(long ownerId, Status status);
+    List<Booking> findAllByOwnerStatusIs(long ownerId, Status status, Pageable pageable);
 
     @Query("select b " +
             "from Booking as b " +

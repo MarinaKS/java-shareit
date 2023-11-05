@@ -24,16 +24,6 @@ public class BookingMapper {
         return booking;
     }
 
-    public static BookingDto toBookingDto(Booking booking) {
-        return new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                booking.getItem().getId(),
-                booking.getStatus()
-        );
-    }
-
     public static BookingResponseDto toBookingResponseDto(Booking booking) {
         return new BookingResponseDto(
                 booking.getId(),

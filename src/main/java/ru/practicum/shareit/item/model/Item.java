@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 import javax.persistence.*;
@@ -8,6 +8,10 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "items", schema = "public")
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +22,7 @@ public class Item {
     private Boolean isAvailable;
     @Column(name = "owner_id")
     private Long ownerId;
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 }

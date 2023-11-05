@@ -2,23 +2,21 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 import ru.practicum.shareit.booking.dto.BookingForItemResponseDto;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
 @Builder
 public class ItemResponseWithBookingDto {
     private Long id;
-    @NonNull
     @NotEmpty
     private String name;
-    @NonNull
     @NotEmpty
     private String description;
-    @NonNull
+    @NotNull
     private Boolean available;
     private Long request;
     private BookingForItemResponseDto lastBooking;

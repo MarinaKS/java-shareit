@@ -18,6 +18,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.pageable.OffsetLimitPageable;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -36,8 +37,9 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    public List<ItemResponseWithBookingDto> getItems(long userId) {
-        List<Item> items = itemRepository.findAllByOwnerIdIsOrderByIdAsc(userId);
+    public List<ItemResponseWithBookingDto> getItems(long userId, int from, int size) {
+        OffsetLimitPageable pageable = new OffsetLimitPageable(from, size);
+        List<Item> items = itemRepository.findAllByOwnerIdIsOrderByIdAsc(userId, pageable);
         List<ItemResponseWithBookingDto> itemDtos = new ArrayList<>();
         for (Item item : items) {
             BookingForItemResponseDto lastBooking = BookingMapper.toBookingForItemResponseDto(
@@ -120,11 +122,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<Item> searchItem(String text) {
+    public List<Item> searchItem(String text, int from, int size) {
+        OffsetLimitPageable pageable = new OffsetLimitPageable(from, size);
         if (text.isEmpty()) {
             return new ArrayList<>();
         }
-        return itemRepository.findAllByNameOrDescriptionContainingIgnoreCase(text);
+        return itemRepository.findAllByNameOrDescriptionContainingIgnoreCase(text, pageable);
     }
 
     @Override
@@ -140,14 +143,14 @@ public class ItemServiceImpl implements ItemService {
         return commentRepository.save(comment);
     }
 
-    boolean validateOwner(Item item, long userId) {
+    private boolean validateOwner(Item item, long userId) {
         if (item.getOwnerId() != userId) {
             throw new UpdateItemException("Редактировать вещь может только ее пользователь");
         }
         return true;
     }
 
-    boolean validateUserIdExist(long userId) {
+    private boolean validateUserIdExist(long userId) {
         for (User user : userRepository.findAll()) {
             if (user.getId() == userId) {
                 return true;

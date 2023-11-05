@@ -21,14 +21,6 @@ public class UserMapper {
         return user;
     }
 
-    public static UserUpdateDto toUserUpdateDto(User user) {
-        return new UserUpdateDto(
-                user.getId(),
-                user.getName(),
-                user.getEmail()
-        );
-    }
-
     public static User toUser(UserUpdateDto userUpdateDto) {
         User user = new User();
         user.setId(userUpdateDto.getId());
