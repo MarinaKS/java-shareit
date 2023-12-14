@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.dto.UserUpdateDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDto addUser(@RequestBody @Valid UserDto userDto) {
+    public UserDto addUser(@RequestBody UserDto userDto) {
         User addedUser = userService.addUser(UserMapper.toUser(userDto));
         log.info(String.format("создан пользователь: id %d", addedUser.getId()));
         UserDto addedUserDto = UserMapper.toUserDto(addedUser);
@@ -47,7 +46,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@RequestBody @Valid UserUpdateDto userUpdateDto, @PathVariable long userId) {
+    public UserDto updateUser(@RequestBody UserUpdateDto userUpdateDto, @PathVariable long userId) {
         userUpdateDto.setId(userId);
         User updatedUser = userService.updateUser(UserMapper.toUser(userUpdateDto));
         log.info("Пользователь id " + updatedUser.getId() + " обновлён");

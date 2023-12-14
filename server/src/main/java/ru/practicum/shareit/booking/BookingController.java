@@ -10,8 +10,6 @@ import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +24,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @PostMapping
-    public BookingResponseDto addBooking(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid BookingDto bookingDto) {
+    public BookingResponseDto addBooking(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody BookingDto bookingDto) {
         Booking booking = BookingMapper.toBooking(bookingDto, userId);
         booking.setStatus(Status.WAITING);
         log.info(booking.getStart() + "     " + booking.getEnd());
@@ -49,9 +47,9 @@ public class BookingController {
     @GetMapping
     public List<BookingResponseDto> getBookingsByUserIdSorted(
             @RequestHeader(X_SHARER_USER_ID) long userId,
-            @RequestParam(value = "state", defaultValue = "ALL") @Valid State state,
-            @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
-            @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+            @RequestParam(value = "state", defaultValue = "ALL") State state,
+            @RequestParam(value = "from", required = false) Integer from,
+            @RequestParam(value = "size", required = false) Integer size) {
         if (from == null && size == null) {
             from = 0;
             size = Integer.MAX_VALUE;
@@ -68,8 +66,8 @@ public class BookingController {
     public List<BookingResponseDto> getBookingsByItems(
             @RequestHeader(X_SHARER_USER_ID) long userId,
             @RequestParam(value = "state", defaultValue = "ALL") State state,
-            @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
-            @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+            @RequestParam(value = "from", required = false) Integer from,
+            @RequestParam(value = "size", required = false) Integer size) {
         if (from == null && size == null) {
             from = 0;
             size = Integer.MAX_VALUE;

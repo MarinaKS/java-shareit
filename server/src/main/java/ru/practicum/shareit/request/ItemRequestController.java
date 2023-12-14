@@ -9,8 +9,6 @@ import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,7 +25,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto addItemRequest(@RequestHeader(X_SHARER_USER_ID) long userId,
-                                         @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                         @RequestBody ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDto);
         itemRequest.getRequestor().setId(userId);
         itemRequest.setCreated(LocalDateTime.now());
@@ -46,8 +44,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> getItemRequestsSorted(@RequestHeader(X_SHARER_USER_ID) long userId,
-                                                      @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
-                                                      @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+                                                      @RequestParam(value = "from", required = false) Integer from,
+                                                      @RequestParam(value = "size", required = false) Integer size) {
         if (from == null && size == null) {
             from = 0;
             size = Integer.MAX_VALUE;

@@ -11,8 +11,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.validation.Valid;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +28,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemResponseWithBookingDto> getItems(@RequestHeader(X_SHARER_USER_ID) long userId,
-                                                     @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
-                                                     @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+                                                     @RequestParam(value = "from", required = false) Integer from,
+                                                     @RequestParam(value = "size", required = false) Integer size) {
         if (from == null && size == null) {
             from = 0;
             size = Integer.MAX_VALUE;
@@ -44,7 +42,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody ItemDto itemDto) {
         validateUserIdExist(userId);
         Item item = ItemMapper.toItem(itemDto);
         item.setOwnerId(userId);
@@ -54,7 +52,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid ItemUpdatedDto itemUpdatedDto, @PathVariable long itemId) {
+    public ItemDto updateItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody ItemUpdatedDto itemUpdatedDto, @PathVariable long itemId) {
         itemUpdatedDto.setId(itemId);
         Item item = ItemMapper.toItem(itemUpdatedDto);
         item.setOwnerId(userId);
@@ -71,8 +69,8 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchItem(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestParam("text") String text,
-                                    @RequestParam(value = "from", required = false) @PositiveOrZero Integer from,
-                                    @RequestParam(value = "size", required = false) @PositiveOrZero Integer size) {
+                                    @RequestParam(value = "from", required = false) Integer from,
+                                    @RequestParam(value = "size", required = false) Integer size) {
         if (from == null && size == null) {
             from = 0;
             size = Integer.MAX_VALUE;
@@ -88,8 +86,8 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto addComment(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody @Valid CommentDto commentDto,
-                                 @PathVariable @Valid long itemId) {
+    public CommentDto addComment(@RequestHeader(X_SHARER_USER_ID) long userId, @RequestBody CommentDto commentDto,
+                                 @PathVariable long itemId) {
         Comment comment = CommentMapper.toComment(commentDto, userId, itemId, LocalDateTime.now());
         Comment commentAdded = itemService.addComment(comment);
         return CommentMapper.toCommentDto(commentAdded);
