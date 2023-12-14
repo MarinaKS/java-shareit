@@ -13,6 +13,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.CommentValidationException;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
+import ru.practicum.shareit.exceptions.UpdateItemException;
 import ru.practicum.shareit.item.dto.ItemResponseWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
@@ -166,6 +167,30 @@ class ItemServiceImplTest {
         // Act & Assert
         assertThrows(ObjectNotFoundException.class, () -> itemService.updateItem(item));
         verify(itemRepository, times(1)).findById(item.getId());
+    }
+
+    @Test
+    public void testUpdateItemThrowsExceptionWhenInvalidOwner() {
+        Item item = new Item();
+        item.setId(1L);
+        item.setOwnerId(123L);
+        item.setIsAvailable(true);
+        item.setDescription("Description");
+        item.setName("Name");
+        User user = new User();
+        user.setId(456L);
+        Item updatedItem = new Item();
+        updatedItem.setId(1L);
+        updatedItem.setOwnerId(456L);
+        updatedItem.setIsAvailable(true);
+        updatedItem.setDescription("Updated Description");
+        updatedItem.setName("Updated Name");
+        when(userRepository.findAll()).thenReturn(List.of(user));
+        when(itemRepository.findById(1L)).thenReturn(java.util.Optional.of(item));
+
+        assertThrows(UpdateItemException.class, () -> {
+            itemService.updateItem(updatedItem);
+        });
     }
 
     @Test
