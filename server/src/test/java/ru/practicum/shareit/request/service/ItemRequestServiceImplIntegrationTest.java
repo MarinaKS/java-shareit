@@ -111,8 +111,7 @@ public class ItemRequestServiceImplIntegrationTest {
         Long userId = user.getId();
         Long anotherUserId = anotherUser.getId();
 
-        List<ItemRequestDto> itemRequests = itemRequestService.
-                getItemRequestsSorted(anotherUserId, 0, 10);
+        List<ItemRequestDto> itemRequests = itemRequestService.getItemRequestsSorted(anotherUserId, 0, 10);
 
         assertFalse(itemRequests.isEmpty());
         assertEquals(2, itemRequests.size());
