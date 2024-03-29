@@ -5,5 +5,5 @@ ShareIt - сервис объявлений с бизнес-логикой по 
 git clone git@github.com:MarinaKS/java-shareit.git
 cd java-shareit
 mvn clean install
-java -jar target\shareit-0.0.1-SNAPSHOT.jar
+docker-compose up -d
 ```
